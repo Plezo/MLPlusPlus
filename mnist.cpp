@@ -2,8 +2,7 @@
 
 TODO:
 
-Import labels
-Shuffle the the rows in the MNIST dataset (like np.random.shuffle in Python)
+Shuffle the the rows in the MNIST dataset (like np.random.shuffle in Python) (Make sure to shuffle the labels as well to correspond to the same rows)
 
 */
 
@@ -89,28 +88,47 @@ void ReadMNISTLabels(vector<double> &arr) {
     }
 }
 
+void transpose(vector<vector<double>> &arr) {
+    int m = arr.size(), n = arr[0].size();
+    vector<vector<double>> res(n, vector<double>(m));
+    for (int i = 0; i < m; i++) {
+        for (int j = 0; j < n; ++j) {
+            res[j][i] = arr[i][j];
+        }
+    }
+    arr = res;
+}
+
 int main() {
     vector<vector<double>> train;
     vector<double> labels;
     ReadMNIST(train);
     ReadMNISTLabels(labels);
 
+    int m = train.size(), n = train[0].size();
+
     // shuffle data
 
-    vector<vector<double>> data_dev(1000, vector<double>(784));
+    vector<vector<double>> data_dev(1000, vector<double>(n));
     copy(train.begin(), train.begin()+1000, data_dev.begin());
-    // transpose data_dev
+    transpose(data_dev);
 
     vector<double> Y_dev(1000);
-    vector<vector<double>> X_dev(1000, vector<double>(784));
+    copy(labels.begin(), labels.begin()+1000, Y_dev.begin());
+
+    vector<vector<double>> X_dev(1000, vector<double>(n));
+    copy(data_dev.begin(), data_dev.end(), X_dev.begin());
     // X_dev = X_dev / 255
 
-    vector<vector<double>> data_train(9000, vector<double>(784));
+    vector<vector<double>> data_train(m-1000, vector<double>(n));
     copy(train.begin()+1000, train.end(), data_train.begin());
-    // transpose data_train
+    transpose(data_train);
 
-    vector<double> Y_train(9000);
-    vector<vector<double>> X_train(9000, vector<double>(784));
+    vector<double> Y_train(m-1000);
+    copy(labels.begin()+1000, labels.end(), Y_train.begin());
+
+    vector<vector<double>> X_train(m-1000, vector<double>(n));
+    copy(data_train.begin(), data_train.end(), X_train.begin());
     // X_train = X_train / 255
     // _, m_train = X_train.shape
 
