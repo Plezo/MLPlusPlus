@@ -1,21 +1,28 @@
 #pragma once
 
 #include <vector>
+#include <string>
+#include <random>
+#include <math.h>
+#include <iostream>
 
 using namespace std;
 
+using matrix = vector<vector<double>>;
+
 class Layer {
 public:
-    Layer(int input_size, int output_size) {
-        weights = vector<vector<double>>(input_size, vector<double>(output_size));
-        biases = vector<vector<double>>(1, vector<double>(output_size));
-    }
+    Layer(int input_size, int output_size);
 
     // calculates the output of the layer
-    vector<vector<double>> calculateOutput(vector<vector<double>> inputs);
+    matrix forward(matrix inputs);
+    matrix backward(matrix inputs, matrix output_gradient, double learning_rate);
     
 
 private:
-    vector<vector<double>> weights;
-    vector<vector<double>> biases;
+    matrix weights;
+    matrix biases;
+
+    // TODO: Make this a class
+    string activation_function = "sigmoid";
 };
